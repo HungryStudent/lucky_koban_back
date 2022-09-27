@@ -8,7 +8,9 @@ class UserCreate(BaseModel):
 
 
 class Case(BaseModel):
+    id: int
     name: str
     price: int
-    old_price: int
-    image_path: str
+
+    class Config:
+        orm_mode = True
