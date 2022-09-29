@@ -19,6 +19,10 @@ def get_db():
         db.close()
 
 
-@router.get('/get_me', response_model=List[schemas.Case])
+@router.get('/cases/get', response_model=List[schemas.Case])
+async def get_cases(db: Session = Depends(get_db)):
+    return crud.get_cases(db)
+
+@router.get('/products/get', response_model=List[schemas.Case])
 async def get_cases(db: Session = Depends(get_db)):
     return crud.get_cases(db)
