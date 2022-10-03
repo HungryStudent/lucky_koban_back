@@ -7,5 +7,5 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(docs_url="/api/docs")
 
 
-app.include_router(users.router, prefix="api/user")
+app.include_router(users.router, prefix="/api/user")
 app.include_router(items.router, prefix="/api/items")
