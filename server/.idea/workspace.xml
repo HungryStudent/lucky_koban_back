@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af4f937f-2741-462b-a6d1-76aa71dda4e8" name="Changes" comment="add requirments.txt">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/database.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,7 +83,7 @@
       <workItem from="1664616496258" duration="416000" />
       <workItem from="1664620732988" duration="727000" />
       <workItem from="1664629341559" duration="7841000" />
-      <workItem from="1664812314886" duration="1092000" />
+      <workItem from="1664812314886" duration="1395000" />
     </task>
     <task id="LOCAL-00001" summary="test">
       <created>1664281062615</created>
@@ -169,7 +169,21 @@
       <option name="project" value="LOCAL" />
       <updated>1664812695257</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="add requirments.txt">
+      <created>1664813523053</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1664813523053</updated>
+    </task>
+    <task id="LOCAL-00014" summary="add requirments.txt">
+      <created>1664813589690</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1664813589690</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
