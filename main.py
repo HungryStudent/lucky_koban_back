@@ -4,7 +4,7 @@ from core.database import engine
 from endpoints import users, admin, items
 
 models.Base.metadata.create_all(bind=engine)
-app = FastAPI(root_path="/api", docs_url="/api", openapi_url="/openapi.json")
+app = FastAPI(docs_url="/api")
 
 
 app.include_router(users.router, prefix="/api/user")
