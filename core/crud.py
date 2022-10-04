@@ -1,8 +1,8 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-
 from core import models, schemas
 
+import jwt
 import hashlib
 
 salt = "domoi"
@@ -31,7 +31,8 @@ def sign_user(user_data: schemas.UserCreate, db: Session):
     hash_in_db = db.query(models.Users.password_hash).filter(models.Users.login == user_data.login).first()
     if hash_in_db is None:
         return schemas.SignResponse(status=False, msg="invalid login")
-    if password_hash == hash_in_db:
-
-        return schemas.SignResponse(status=True, msg="sign is successful")
+    if password_hash == hash_in_db[0]:
+        user_id = db.query(models.Users.id).filter(models.Users.login == user_data.login).first()[0]
+        token = jwt.encode({"user_id": user_id}, salt, algorithm="HS256")
+        return schemas.SignResponse(status=True, msg="sign is successful", token=token)
     return schemas.SignResponse(status=False, msg="invalid password")
