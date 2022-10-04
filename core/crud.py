@@ -17,11 +17,15 @@ def add_user(db: Session, user_data: schemas.UserCreate):
     md5.update((user_data.password + salt).encode('utf-8'))
     password_hash = md5.hexdigest()
     try:
-        db.add(models.Users(login=user_data.login, password_hash=password_hash))
+        user = models.Users(login=user_data.login, password_hash=password_hash)
+        db.add(user)
+        db.flush()
+        token = jwt.encode({"user_id": user.id}, salt, algorithm="HS256")
         db.commit()
+
     except IntegrityError:
         return schemas.RegResponse(status=False, msg="this login is already taken")
-    return schemas.RegResponse(status=True, msg="registration is successful")
+    return schemas.RegResponse(status=True, msg="registration is successful", token=token)
 
 
 def sign_user(user_data: schemas.UserCreate, db: Session):
