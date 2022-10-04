@@ -22,3 +22,8 @@ def get_db():
 @router.get('/get_me', response_model=List[schemas.Case])
 async def get_cases(db: Session = Depends(get_db)):
     return crud.get_cases(db)
+
+
+@router.post('/reg', response_model=schemas.RegResponse)
+async def reg_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
+    return crud.add_user(db, user_data)

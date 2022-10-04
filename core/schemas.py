@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class UserCreate(BaseModel):
+    login: str
     password: str
 
 
@@ -14,3 +15,8 @@ class Case(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class RegResponse(BaseModel):
+    status: str
+    msg: str
