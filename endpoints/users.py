@@ -24,6 +24,11 @@ async def get_cases(db: Session = Depends(get_db)):
     return crud.get_cases(db)
 
 
-@router.post('/reg', response_model=schemas.RegResponse)
+@router.post('/reg', response_model=schemas.RegResponse, description="Registration")
 async def reg_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.add_user(db, user_data)
+
+
+@router.post('/sign', response_model=schemas.SignResponse)
+async def sign_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
+    return crud.sign_user(user_data, db)

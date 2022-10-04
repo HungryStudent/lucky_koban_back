@@ -20,7 +20,7 @@ def get_db():
 
 
 @router.get('/cases/get', response_model=List[schemas.Case])
-async def get_cases(db: Session = Depends(get_db), user: schemas.UserCreate):
+async def get_cases(db: Session = Depends(get_db)):
     return crud.get_cases(db)
 
 

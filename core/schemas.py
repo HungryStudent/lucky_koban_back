@@ -20,3 +20,9 @@ class Case(BaseModel):
 class RegResponse(BaseModel):
     status: str
     msg: str
+
+
+class SignResponse(BaseModel):
+    status: str
+    msg: str
+    token: str = None
