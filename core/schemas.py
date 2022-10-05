@@ -17,13 +17,7 @@ class Case(BaseModel):
         orm_mode = True
 
 
-class RegResponse(BaseModel):
-    status: str
-    msg: str
-    token: str = None
-
-
-class SignResponse(BaseModel):
+class AuthResponse(BaseModel):
     status: str
     msg: str
     token: str = None

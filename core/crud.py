@@ -24,8 +24,8 @@ def add_user(db: Session, user_data: schemas.UserCreate):
         db.commit()
 
     except IntegrityError:
-        return schemas.RegResponse(status=False, msg="this login is already taken")
-    return schemas.RegResponse(status=True, msg="registration is successful", token=token)
+        return schemas.AuthResponse(status=False, msg="this login is already taken")
+    return schemas.AuthResponse(status=True, msg="registration is successful", token=token)
 
 
 def sign_user(user_data: schemas.UserCreate, db: Session):
@@ -34,9 +34,9 @@ def sign_user(user_data: schemas.UserCreate, db: Session):
     password_hash = md5.hexdigest()
     hash_in_db = db.query(models.Users.password_hash).filter(models.Users.login == user_data.login).first()
     if hash_in_db is None:
-        return schemas.SignResponse(status=False, msg="invalid login")
+        return schemas.AuthResponse(status=False, msg="invalid login")
     if password_hash == hash_in_db[0]:
         user_id = db.query(models.Users.id).filter(models.Users.login == user_data.login).first()[0]
         token = jwt.encode({"user_id": user_id}, salt, algorithm="HS256")
-        return schemas.SignResponse(status=True, msg="sign is successful", token=token)
-    return schemas.SignResponse(status=False, msg="invalid password")
+        return schemas.AuthResponse(status=True, msg="sign is successful", token=token)
+    return schemas.AuthResponse(status=False, msg="invalid password")
