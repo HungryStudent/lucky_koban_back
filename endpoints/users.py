@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends
-from fastapi import Cookie
+from fastapi import APIRouter, Depends, Cookie, HTTPException
 from typing import List
 
+import jwt
 from sqlalchemy.orm import Session
+
+from configs import salt
 
 from core.database import SessionLocal
 from core import crud
@@ -19,9 +21,16 @@ def get_db():
         db.close()
 
 
+def get_info_token(token):
+    try:
+        user_data = jwt.decode(token, salt, algorithms=["HS256"])["id"]
+    except:
+        raise HTTPException(400, "invalid token")
+
+
 @router.get('/get_me', response_model=List[schemas.Case])
 async def get_cases(db: Session = Depends(get_db), token: str = Cookie()):
-    print(token)
+    user_id = get_info_token(token)
     return crud.get_cases(db)
 
 

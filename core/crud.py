@@ -4,9 +4,7 @@ from core import models, schemas
 
 import jwt
 import hashlib
-
-salt = "domoi"
-
+from configs import salt
 
 def get_cases(db: Session):
     return db.query(models.Cases).all()
@@ -38,5 +36,6 @@ def sign_user(user_data: schemas.UserCreate, db: Session):
     if password_hash == hash_in_db[0]:
         user_id = db.query(models.Users.id).filter(models.Users.login == user_data.login).first()[0]
         token = jwt.encode({"user_id": user_id}, salt, algorithm="HS256")
+
         return schemas.AuthResponse(status=True, msg="sign is successful", token=token)
     return schemas.AuthResponse(status=False, msg="invalid password")
