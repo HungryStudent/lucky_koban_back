@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-
+from fastapi import Cookie
 from typing import List
 
 from sqlalchemy.orm import Session
@@ -20,7 +20,8 @@ def get_db():
 
 
 @router.get('/get_me', response_model=List[schemas.Case])
-async def get_cases(db: Session = Depends(get_db)):
+async def get_cases(db: Session = Depends(get_db), sessionKey: str = Cookie(None)):
+    print(sessionKey)
     return crud.get_cases(db)
 
 
