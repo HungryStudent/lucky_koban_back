@@ -20,7 +20,7 @@ def get_db():
 
 
 @router.get('/get_me', response_model=List[schemas.Case])
-async def get_cases(db: Session = Depends(get_db), sessionKey: str = Cookie(None)):
+async def get_cases(db: Session = Depends(get_db), sessionKey: str = Cookie()):
     print(sessionKey)
     return crud.get_cases(db)
 
