@@ -30,7 +30,7 @@ def get_info_token(token):
 
 
 @router.get('/get_me', response_model=schemas.UserInfo)
-async def get_cases(db: Session = Depends(get_db), token: str = Cookie()):
+async def get_current_user(db: Session = Depends(get_db), token: str = Cookie()):
     user_id = get_info_token(token)
 
     return crud.get_user(db, user_id)
