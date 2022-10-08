@@ -29,7 +29,7 @@ def get_info_token(token):
     return user_data["user_id"]
 
 
-@router.get('/get_me', response_model=List[models.Users], response_model_include={"login", "balance"})
+@router.get('/get_me', response_model=List[schemas.UserInfo], response_model_include={"login", "balance"})
 async def get_cases(db: Session = Depends(get_db), token: str = Cookie()):
     user_id = get_info_token(token)
     return crud.get_user(db, user_id)
