@@ -7,9 +7,14 @@ class UserCreate(BaseModel):
     login: str
     password: str
 
+
 class UserInfo(BaseModel):
     login: str
     balance: str
+
+    class Config:
+        orm_mode = True
+
 
 class Case(BaseModel):
     id: int
