@@ -28,10 +28,10 @@ def get_info_token(token):
         raise HTTPException(400, "invalid token")
 
 
-@router.get('/get_me', response_model=List[schemas.Case])
+@router.get('/get_me', response_model=List[schemas.Case], response_model_include={"login", "balance"})
 async def get_cases(db: Session = Depends(get_db), token: str = Cookie()):
     user_id = get_info_token(token)
-    return crud.get_cases(db)
+    return crud.get_user(db, user_id)
 
 
 @router.post('/reg', response_model=schemas.AuthResponse, description="Registration")
@@ -41,4 +41,4 @@ async def reg_user(user_data: schemas.UserCreate, db: Session = Depends(get_db))
 
 @router.post('/sign', response_model=schemas.AuthResponse)
 async def sign_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    return crud.sign_user(user_data, db)
+    return crud.sign_user(db, user_data)

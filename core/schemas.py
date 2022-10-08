@@ -7,6 +7,9 @@ class UserCreate(BaseModel):
     login: str
     password: str
 
+class UserInfo(BaseModel):
+    login: str
+    balance: str
 
 class Case(BaseModel):
     id: int

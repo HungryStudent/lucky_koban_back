@@ -14,6 +14,7 @@ class Users(Base):
     id = Column(Integer, primary_key=True, index=True)
     login = Column(VARCHAR(255), unique=True)
     password_hash = Column(VARCHAR(255))
+    balance = Column(Integer)
     tg_id = Column(BigInteger, unique=True)
     tg_username = Column(VARCHAR(255))
 

@@ -15,7 +15,7 @@ def add_user(db: Session, user_data: schemas.UserCreate):
     md5.update((user_data.password + salt).encode('utf-8'))
     password_hash = md5.hexdigest()
     try:
-        user = models.Users(login=user_data.login, password_hash=password_hash)
+        user = models.Users(login=user_data.login, password_hash=password_hash, balance=0)
         db.add(user)
         db.flush()
         token = jwt.encode({"user_id": user.id}, salt, algorithm="HS256")
@@ -26,7 +26,7 @@ def add_user(db: Session, user_data: schemas.UserCreate):
     return schemas.AuthResponse(status=True, msg="registration is successful", token=token)
 
 
-def sign_user(user_data: schemas.UserCreate, db: Session):
+def sign_user(db: Session, user_data: schemas.UserCreate):
     md5 = hashlib.md5()
     md5.update((user_data.password + salt).encode('utf-8'))
     password_hash = md5.hexdigest()
@@ -39,3 +39,7 @@ def sign_user(user_data: schemas.UserCreate, db: Session):
 
         return schemas.AuthResponse(status=True, msg="sign is successful", token=token)
     return schemas.AuthResponse(status=False, msg="invalid password")
+
+
+def get_user(db: Session, user_id):
+    return db.query(models.Users).filter(models.Users.id == user_id).first()
