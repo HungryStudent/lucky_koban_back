@@ -29,3 +29,8 @@ class AuthResponse(BaseModel):
     status: str
     msg: str
     token: str = None
+
+
+class BaseResponse(BaseModel):
+    status: str
+    msg: str

@@ -2,9 +2,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from core import models, schemas
 
+import random
+import string
 import jwt
+
 import hashlib
 from configs import salt
+
 
 def get_cases(db: Session):
     return db.query(models.Cases).all()
@@ -43,3 +47,9 @@ def sign_user(db: Session, user_data: schemas.UserCreate):
 
 def get_user(db: Session, user_id):
     return db.query(models.Users).filter(models.Users.id == user_id).first()
+
+
+def gen_code(db: Session, email):
+    if db.query(models.Users.is_confirm).filter(models.Users.email == email).first()[0]:
+        return schemas.BaseResponse(status="False", msg="email is confirm")
+

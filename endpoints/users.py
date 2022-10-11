@@ -1,14 +1,14 @@
-from fastapi import APIRouter, Depends, Cookie, HTTPException
+from fastapi import APIRouter, Depends, Cookie, HTTPException, Body
 from typing import List
 
 import jwt
+from jwt import DecodeError
 from sqlalchemy.orm import Session
 
 from configs import salt
 
 from core.database import SessionLocal
 from core import crud, models, schemas
-from core.tg import send_code
 
 router = APIRouter()
 
@@ -21,18 +21,16 @@ def get_db():
         db.close()
 
 
-def get_info_token(token):
+def get_info_token(token: str = Cookie()):
     try:
         user_data = jwt.decode(token, salt, algorithms=["HS256"])
-    except:
+    except DecodeError:
         raise HTTPException(400, "invalid token")
     return user_data["user_id"]
 
 
 @router.get('/get_me', response_model=schemas.UserInfo)
-async def get_current_user(db: Session = Depends(get_db), token: str = Cookie()):
-    user_id = get_info_token(token)
-
+async def get_current_user(db: Session = Depends(get_db), user_id: str = Depends(get_info_token)):
     return crud.get_user(db, user_id)
 
 
@@ -41,11 +39,13 @@ async def reg_user(user_data: schemas.UserCreate, db: Session = Depends(get_db))
     return crud.add_user(db, user_data)
 
 
-@router.post('/sign', response_model=schemas.AuthResponse)
+@router.post('/login', response_model=schemas.AuthResponse)
 async def sign_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.sign_user(db, user_data)
 
 
-@router.get('/tg/send_code')
-async def tg_send_code(db: Session = Depends(get_db)):
-    await send_code("efanov_n")
+@router.post('/send_email_code')
+async def send_email_code(email: str = Body(embed=True), db: Session = Depends(get_db)):
+    code = crud.gen_code(db, email)
+    if code:
+        pass
