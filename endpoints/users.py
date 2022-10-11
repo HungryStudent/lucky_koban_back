@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from configs import salt
 
 from core.database import SessionLocal
-from core import crud, models
-from core import schemas
+from core import crud, models, schemas
+from core.tg import send_code
 
 router = APIRouter()
 
@@ -44,3 +44,8 @@ async def reg_user(user_data: schemas.UserCreate, db: Session = Depends(get_db))
 @router.post('/sign', response_model=schemas.AuthResponse)
 async def sign_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.sign_user(db, user_data)
+
+
+@router.get('/tg/send_code')
+async def tg_send_code(db: Session = Depends(get_db)):
+    await send_code("efanov_n")

@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /configs.py
+/core/my_session.session
