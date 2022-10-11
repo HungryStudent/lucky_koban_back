@@ -45,6 +45,6 @@ async def sign_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)
 
 
 @router.post('/send_email_code')
-async def send_email_code(email: str = schemas.Email, db: Session = Depends(get_db)):
+async def send_email_code(email: schemas.Email, db: Session = Depends(get_db)):
     return HTTPException(204, "in development")
     # code = crud.gen_code(db, user_id)
