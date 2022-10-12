@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Cookie, HTTPException, Body
+from fastapi import Response
 from typing import List
 
 import jwt
@@ -34,17 +35,21 @@ async def get_current_user(db: Session = Depends(get_db), user_id: str = Depends
     return crud.get_user(db, user_id)
 
 
-@router.post('/reg', response_model=schemas.AuthResponse, description="Registration")
-async def reg_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    return crud.add_user(db, user_data)
+@router.post('/reg', response_model=schemas.BaseResponse, description="Registration", tags=["Auth Methods"])
+async def reg_user(response: Response, user_data: schemas.UserCreate, db: Session = Depends(get_db)):
+    token = crud.add_user(db, user_data)
+    response.set_cookie(key="token", value=token)
+    return schemas.BaseResponse(status=True, msg="reg is sucessful")
 
 
-@router.post('/login', response_model=schemas.AuthResponse)
-async def sign_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    return crud.sign_user(db, user_data)
+@router.post('/login', response_model=schemas.BaseResponse, tags=["Auth Methods"])
+async def sign_user(response: Response, user_data: schemas.UserCreate, db: Session = Depends(get_db)):
+    token = crud.sign_user(db, user_data)
+    response.set_cookie(key="token", value=token)
+    return schemas.BaseResponse(status=True, msg="login is sucessful")
 
 
-@router.post('/send_email_code')
+@router.post('/send_email_code', tags=["Auth Methods"])
 async def send_email_code(email: schemas.Email, db: Session = Depends(get_db)):
     return HTTPException(204, "in development")
     # code = crud.gen_code(db, user_id)
