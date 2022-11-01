@@ -40,9 +40,17 @@ async def get_current_user(db: Session = Depends(get_db), user_id: str = Depends
 async def reg_user(response: Response, user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     if not email_validate.validate(user_data.email, check_smtp=False):
         raise HTTPException(400, "invalid email")
-    token = crud.add_confirm_user(db, user_data)
+    if crud.check_email(db, user_data.email):
+        raise HTTPException(400, "this email is already taken")
+    token = crud.add_user(db, user_data)
     response.set_cookie(key="token", value=token)
     return schemas.BaseResponse(status=True, msg="reg is sucessful")
+
+
+@router.post('/activate', response_model=schemas.BaseResponse, tags=["Auth Methods"])
+async def check_code(code: schemas.Code, db: Session = Depends(get_db), user_id: str = Depends(get_info_token)):
+    crud.check_code(code.code, user_id, db)
+    return schemas.BaseResponse(status=True, msg="account is activate")
 
 
 @router.post('/login', response_model=schemas.BaseResponse, tags=["Auth Methods"])
@@ -50,9 +58,3 @@ async def sign_user(response: Response, user_data: schemas.UserCreate, db: Sessi
     token = crud.sign_user(db, user_data)
     response.set_cookie(key="token", value=token)
     return schemas.BaseResponse(status=True, msg="login is sucessful")
-
-
-@router.post('/send_email_code', tags=["Auth Methods"])
-async def send_email_code(email: schemas.Email, db: Session = Depends(get_db)):
-    return HTTPException(204, "in development")
-    # code = crud.gen_code(db, user_id)
