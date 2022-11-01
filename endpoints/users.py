@@ -53,6 +53,12 @@ async def check_code(code: schemas.Code, db: Session = Depends(get_db), user_id:
     return schemas.BaseResponse(status=True, msg="account is activate")
 
 
+@router.get('/send_code', response_model=schemas.BaseResponse, tags=["Auth Methods"])
+async def send_code(db: Session = Depends(get_db), user_id: str = Depends(get_info_token)):
+    crud.change_code(user_id, db)
+    return schemas.BaseResponse(status=True, msg="code has been sent")
+
+
 @router.post('/login', response_model=schemas.BaseResponse, tags=["Auth Methods"])
 async def sign_user(response: Response, user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     token = crud.sign_user(db, user_data)

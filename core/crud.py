@@ -21,12 +21,19 @@ def gen_code():
 
 
 def check_code(code, user_id, db: Session):
-    print(code)
     if code == db.query(models.Users.code).filter(models.Users.id == user_id).first()[0]:
         db.query(models.Users).filter(models.Users.id == user_id).update({"is_activate": True})
         db.commit()
         return
     raise HTTPException(400, "invalid code")
+
+
+def change_code(user_id, db: Session):
+    code = gen_code()
+    db.query(models.Users).filter(models.Users.id == user_id).update({"code": code})
+    db.commit()
+    email = db.query(models.Users.email).filter(models.Users.id == user_id).first()[0]
+    smtp.send_code(code, email)
 
 
 def add_user(db: Session, user_data: schemas.UserCreate):
@@ -61,7 +68,7 @@ def sign_user(db: Session, user_data: schemas.UserCreate):
     raise HTTPException(401, "invalid password")
 
 
-def get_user(db: Session, user_id):
+def get_user(db: Session, user_id) -> schemas.UserInfo:
     return db.query(models.Users).filter(models.Users.id == user_id).first()
 
 

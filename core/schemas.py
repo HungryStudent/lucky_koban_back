@@ -7,15 +7,17 @@ class UserCreate(BaseModel):
     email: str
     password: str
 
+
 class Code(BaseModel):
     code: str
+
 
 class Email(BaseModel):
     email: str
 
 
 class UserInfo(BaseModel):
-    login: str
+    email: str
     balance: str
 
     class Config:
