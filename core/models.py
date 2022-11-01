@@ -15,13 +15,9 @@ class Users(Base):
     email = Column(VARCHAR(255), unique=True)
     password_hash = Column(VARCHAR(255))
     balance = Column(Integer)
+    is_activate = Column(Boolean)
+    code = Column(VARCHAR(5))
 
-class RegUsers(Base):
-    __tablename__ = "reg_users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(VARCHAR(255), unique=True)
-    password_hash = Column(VARCHAR(255))
 
 class Cases(Base):
     __tablename__ = "cases"
