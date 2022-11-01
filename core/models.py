@@ -12,12 +12,16 @@ class Users(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    login = Column(VARCHAR(255), unique=True)
+    email = Column(VARCHAR(255), unique=True)
     password_hash = Column(VARCHAR(255))
     balance = Column(Integer)
-    email = Column(VARCHAR(255), unique=True)
-    is_confirm = Column(Boolean)
 
+class RegUsers(Base):
+    __tablename__ = "reg_users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(VARCHAR(255), unique=True)
+    password_hash = Column(VARCHAR(255))
 
 class Cases(Base):
     __tablename__ = "cases"

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Cookie, HTTPException, Body
 from fastapi import Response
 from typing import List
 
+import email_validate
 import jwt
 from jwt import DecodeError
 from sqlalchemy.orm import Session
@@ -26,7 +27,7 @@ def get_info_token(token: str = Cookie()):
     try:
         user_data = jwt.decode(token, salt, algorithms=["HS256"])
     except DecodeError:
-        raise HTTPException(400, "invalid token")
+        raise HTTPException(401, "invalid token")
     return user_data["user_id"]
 
 
@@ -37,7 +38,9 @@ async def get_current_user(db: Session = Depends(get_db), user_id: str = Depends
 
 @router.post('/reg', response_model=schemas.BaseResponse, description="Registration", tags=["Auth Methods"])
 async def reg_user(response: Response, user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    token = crud.add_user(db, user_data)
+    if not email_validate.validate(user_data.email, check_smtp=False):
+        raise HTTPException(400, "invalid email")
+    token = crud.add_confirm_user(db, user_data)
     response.set_cookie(key="token", value=token)
     return schemas.BaseResponse(status=True, msg="reg is sucessful")
 
