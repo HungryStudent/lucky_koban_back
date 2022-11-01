@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from core import models, schemas
+from core import models, schemas, smtp
 
 import random
 import string
@@ -14,16 +14,28 @@ from configs import salt
 def get_cases(db: Session):
     return db.query(models.Cases).all()
 
-def add_confirm_user(db: Session, user_data: schemas.UserCreate):
+
+def gen_code():
     letters = string.ascii_uppercase
-    code = ''.join(random.choice(letters) for i in range(5))
+    return ''.join(random.choice(letters) for i in range(5))
+
+
+def check_code(code, user_id, db: Session):
     print(code)
+    if code == db.query(models.Users.code).filter(models.Users.id == user_id).first()[0]:
+        db.query(models.Users).filter(models.Users.id == user_id).update({"is_activate": True})
+        db.commit()
+        return
+    raise HTTPException(400, "invalid code")
+
+
 def add_user(db: Session, user_data: schemas.UserCreate):
     md5 = hashlib.md5()
     md5.update((user_data.password + salt).encode('utf-8'))
     password_hash = md5.hexdigest()
+    code = gen_code()
     try:
-        user = models.Users(email=user_data.email, password_hash=password_hash, balance=0)
+        user = models.Users(email=user_data.email, password_hash=password_hash, balance=0, is_activate=False, code=code)
         db.add(user)
         db.flush()
         token = jwt.encode({"user_id": user.id}, salt, algorithm="HS256")
@@ -31,6 +43,7 @@ def add_user(db: Session, user_data: schemas.UserCreate):
 
     except IntegrityError:
         raise HTTPException(400, "this email is already taken")
+    smtp.send_code(code, user_data.email)
     return token
 
 
@@ -52,8 +65,5 @@ def get_user(db: Session, user_id):
     return db.query(models.Users).filter(models.Users.id == user_id).first()
 
 
-def gen_code(db: Session, email):
-
-    if db.query(models.Users.is_confirm).filter(models.Users.email == email).first()[0]:
-        return schemas.BaseResponse(status="False", msg="email is confirm")
-
+def check_email(db: Session, email):
+    return db.query(models.Users.email).filter(models.Users.email == email).first() is not None
