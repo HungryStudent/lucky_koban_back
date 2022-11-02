@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Cookie, HTTPException, Body
+from fastapi import APIRouter, Depends, Cookie, HTTPException
 from fastapi import Response
 from typing import List
 
@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from configs import salt
 
 from core.database import SessionLocal
-from core import crud, models, schemas
+from core import crud, schemas
 
 router = APIRouter()
 
@@ -44,7 +44,7 @@ async def reg_user(response: Response, user_data: schemas.UserCreate, db: Sessio
         raise HTTPException(400, "this email is already taken")
     token = crud.add_user(db, user_data)
     response.set_cookie(key="token", value=token, httponly=True)
-    return schemas.BaseResponse(status=True, msg="reg is sucessful")
+    return schemas.BaseResponse(status=True, msg="reg is successful")
 
 
 @router.post('/activate', response_model=schemas.BaseResponse, tags=["Auth Methods"])
