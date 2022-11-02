@@ -31,7 +31,7 @@ def get_info_token(token: str = Cookie()):
     return user_data["user_id"]
 
 
-@router.get('/get_me', response_model=schemas.UserInfo)
+@router.get('/get_me', response_model=schemas.UserInfo, tags=["User Methods "])
 async def get_current_user(db: Session = Depends(get_db), user_id: str = Depends(get_info_token)):
     return crud.get_user(db, user_id)
 
@@ -43,7 +43,7 @@ async def reg_user(response: Response, user_data: schemas.UserCreate, db: Sessio
     if crud.check_email(db, user_data.email):
         raise HTTPException(400, "this email is already taken")
     token = crud.add_user(db, user_data)
-    response.set_cookie(key="token", value=token)
+    response.set_cookie(key="token", value=token, httponly=True)
     return schemas.BaseResponse(status=True, msg="reg is sucessful")
 
 

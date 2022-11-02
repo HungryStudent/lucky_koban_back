@@ -1,7 +1,6 @@
 import smtplib
+from configs import smtp_user, smtp_passwd
 
-user = "n1kitos1337@yandex.ru"
-passwd = "bqemztyqhywbdgca"
 server = "smtp.yandex.ru"
 port = 587
 subject = "Lucky Koban - Подтверждение почты "
@@ -11,17 +10,17 @@ text = "Здравствуйте, Ваш код для подтверждени�
 
 
 def send_code(code, email):
-    body = "\r\n".join((f"From: {user}", f"To: {email}",
+    body = "\r\n".join((f"From: {smtp_user}", f"To: {email}",
                         f"Subject: {subject}", mime, charset, "", text.format(code=code)))
 
     try:
         smtp = smtplib.SMTP(server, port)
         smtp.starttls()
         smtp.ehlo()
-        smtp.login(user, passwd)
-        smtp.sendmail(user, email, body.encode('utf-8'))
+        smtp.login(smtp_user, smtp_passwd)
+        smtp.sendmail(smtp_user, email, body.encode('utf-8'))
     except smtplib.SMTPException as err:
-        print('Что - то пошло не так...')
+        print('SMTP Error', err)
         raise err
     finally:
         smtp.quit()
