@@ -7,7 +7,7 @@ import jwt
 from jwt import DecodeError
 from sqlalchemy.orm import Session
 
-from configs import salt
+from configs import salt, admin_info, true_admin_token
 
 from core.database import SessionLocal
 from core import crud, schemas
@@ -64,3 +64,11 @@ async def sign_user(response: Response, user_data: schemas.UserCreate, db: Sessi
     token = crud.sign_user(db, user_data)
     response.set_cookie(key="token", value=token)
     return schemas.BaseResponse(status=True, msg="login is sucessful")
+
+
+@router.post('/admin_login', response_model=schemas.BaseResponse, tags=["Auth Methods"])
+async def login_admin(response: Response, user_data: schemas.UserCreate):
+    if user_data == admin_info:
+        response.set_cookie(key="admin_token", value=true_admin_token)
+        return schemas.BaseResponse(status=True, msg="login is sucessful")
+    raise HTTPException(400, "invalid data")
