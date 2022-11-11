@@ -128,4 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /configs.py
+/lucky-koban.ru.crt
+/lucky-koban.ru.key
 /core/my_session.session
