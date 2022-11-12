@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Cookie, HTTPException
+from fastapi import APIRouter, Depends, Cookie, HTTPException, File, UploadFile
 
 from typing import List
 from configs import true_admin_token
@@ -33,6 +33,13 @@ async def get_cases(db: Session = Depends(get_db)):
 async def add_case(admin_token: str = Cookie(), db: Session = Depends(get_db)):
     check_admin_token(admin_token)
     return {"message": "case is created"}
+
+
+@router.post("/files")
+async def create_upload_file(file: bytes = File()):
+    with open("asd.png", "wb") as f:
+        f.write(file)
+    return {"filename": "ok"}
 
 
 @router.get('/products/get', response_model=List[schemas.Case])
