@@ -9,3 +9,4 @@ app = FastAPI(docs_url="/api", redoc_url="/api/redoc", openapi_url="/api/openapi
 
 app.include_router(users.router, prefix="/api/user")
 app.include_router(items.router, prefix="/api/items")
+app.include_router(admin.router, prefix="/api/admin")

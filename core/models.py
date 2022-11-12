@@ -25,6 +25,7 @@ class Cases(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(VARCHAR(255), unique=True)
     price = Column(Integer)
+    old_price = Column(Integer)
 
     products = relationship("Products", secondary=case_product)
 

@@ -8,7 +8,20 @@ import string
 import jwt
 
 import hashlib
-from configs import salt
+from configs import salt, photo_path
+
+
+def add_case(name, price, photo, db: Session):
+    try:
+        case = models.Cases(name=name, price=price)
+        db.add(case)
+        db.flush()
+    except IntegrityError:
+        raise HTTPException(400, "this name is used")
+    path = photo_path + str(case.id) + ".png"
+    with open(path, 'wb') as f:
+        f.write(photo)
+    db.commit()
 
 
 def get_cases(db: Session):

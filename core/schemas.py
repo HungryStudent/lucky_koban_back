@@ -28,6 +28,7 @@ class Case(BaseModel):
     id: int
     name: str
     price: int
+    old_price: Union[int, None]
 
     class Config:
         orm_mode = True
