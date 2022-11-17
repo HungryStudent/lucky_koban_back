@@ -40,7 +40,7 @@ async def login_admin(response: Response, user_data: schemas.UserCreate):
 async def add_case(admin_token: str = Cookie(), photo: UploadFile = File(...), name=Form(...), price=Form(...),
                    db: Session = Depends(get_db)):
     check_admin_token(admin_token)
-    if os.path.splitext(photo.filename)[1] != ".png":
+    if os.path.splitext(photo.filename)[1] not in [".png", ".jpg"]:
         raise HTTPException(415, "is not png file")
     crud.add_case(name, price, photo.file.read(), db)
     return {"message": f"{name} is created"}
