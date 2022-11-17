@@ -3,9 +3,9 @@ from sqlalchemy.orm import relationship
 
 from .database import Base
 
-case_product = Table("case_product", Base.metadata,
+case_games = Table("case_games", Base.metadata,
                      Column("case_id", Integer(), ForeignKey("cases.id")),
-                     Column("product_id", Integer(), ForeignKey("products.id")))
+                     Column("game_id", Integer(), ForeignKey("games.id")))
 
 
 class Users(Base):
@@ -27,11 +27,11 @@ class Cases(Base):
     price = Column(Integer)
     old_price = Column(Integer)
 
-    products = relationship("Products", secondary=case_product)
+    games = relationship("Games", secondary=case_games)
 
 
-class Products(Base):
-    __tablename__ = "products"
+class Games(Base):
+    __tablename__ = "games"
 
     id = Column(Integer, primary_key=True, index=True)
 
@@ -51,7 +51,7 @@ class Keys(Base):
     __tablename__ = "keys"
 
     id = Column(Integer, primary_key=True, index=True)
-    product_id = Column(Integer, ForeignKey("products.id"))
+    game_id = Column(Integer, ForeignKey("games.id"))
     is_buy = Column(Boolean)
 
-    product = relationship("Products")
+    game = relationship("Games")
