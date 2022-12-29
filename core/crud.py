@@ -11,7 +11,7 @@ import hashlib
 from configs import salt, photo_path
 
 
-def add_case(name, price, photo, db: Session):
+def create_case(name, price, photo, db: Session):
     try:
         case = models.Cases(name=name, price=price)
         db.add(case)
@@ -21,6 +21,27 @@ def add_case(name, price, photo, db: Session):
     path = photo_path + str(case.id) + ".png"
     with open(path, 'wb') as f:
         f.write(photo)
+    db.commit()
+
+
+def create_game(name, photo, db: Session):
+    try:
+        game = models.Games(name=name)
+        db.add(game)
+        db.flush()
+    except IntegrityError:
+        raise HTTPException(400, "this name is used")
+    path = photo_path + str(game.id) + ".png"
+    with open(path, 'wb') as f:
+        f.write(photo)
+    db.commit()
+
+
+def add_games_to_case(games_data: schemas.GamesToCase, db: Session):
+    for game in games_data.games_id:
+        case_game = models.case_games.insert().values(case_id=games_data.case_id, game_id=game)
+        print(case_game)
+        db.execute(case_game)
     db.commit()
 
 

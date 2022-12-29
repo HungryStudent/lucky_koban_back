@@ -1,8 +1,8 @@
 import os.path
+from typing import List
 
 from fastapi import APIRouter, Depends, Cookie, HTTPException, File, UploadFile, Form
 from fastapi import Response
-from typing import List
 
 from sqlalchemy.orm import Session
 
@@ -36,11 +36,29 @@ async def login_admin(response: Response, user_data: schemas.UserCreate):
     raise HTTPException(400, "invalid data")
 
 
-@router.post('/cases/add', status_code=201)
-async def add_case(admin_token: str = Cookie(), photo: UploadFile = File(...), name=Form(...), price=Form(...),
-                   db: Session = Depends(get_db)):
+@router.post('/cases/create', status_code=201)
+async def create_case(admin_token: str = Cookie(), photo: UploadFile = File(...), name=Form(...), price=Form(...),
+                      db: Session = Depends(get_db)):
     check_admin_token(admin_token)
     if os.path.splitext(photo.filename)[1] not in [".png", ".jpg"]:
-        raise HTTPException(415, "is not png file")
-    crud.add_case(name, price, photo.file.read(), db)
+        raise HTTPException(415, "is not png/jpg file")
+    crud.create_case(name, price, photo.file.read(), db)
+    return {"message": f"{name} is created"}
+
+
+@router.post('/cases/add_games')
+async def add_games_to_case(games_data: schemas.GamesToCase, admin_token: str = Cookie(),
+                            db: Session = Depends(get_db)):
+    check_admin_token(admin_token)
+    crud.add_games_to_case(games_data, db)
+    return {"message": f"games added to case"}
+
+
+@router.post('/games/create', status_code=201)
+async def create_game(admin_token: str = Cookie(), photo: UploadFile = File(...), name=Form(...),
+                      db: Session = Depends(get_db)):
+    check_admin_token(admin_token)
+    if os.path.splitext(photo.filename)[1] not in [".png", ".jpg"]:
+        raise HTTPException(415, "is not png/jpg file")
+    crud.create_game(name, photo.file.read(), db)
     return {"message": f"{name} is created"}

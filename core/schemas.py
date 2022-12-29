@@ -12,6 +12,11 @@ class Code(BaseModel):
     code: str
 
 
+class GamesToCase(BaseModel):
+    case_id: int
+    games_id: List[int]
+
+
 class Email(BaseModel):
     email: str
 

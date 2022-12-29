@@ -4,8 +4,8 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 case_games = Table("case_games", Base.metadata,
-                     Column("case_id", Integer(), ForeignKey("cases.id")),
-                     Column("game_id", Integer(), ForeignKey("games.id")))
+                   Column("case_id", Integer(), ForeignKey("cases.id")),
+                   Column("game_id", Integer(), ForeignKey("games.id")))
 
 
 class Users(Base):
@@ -34,6 +34,7 @@ class Games(Base):
     __tablename__ = "games"
 
     id = Column(Integer, primary_key=True, index=True)
+    name = Column(VARCHAR(255), unique=True)
 
 
 class Purchases(Base):
