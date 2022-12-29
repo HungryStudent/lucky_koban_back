@@ -53,6 +53,7 @@ class Keys(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     game_id = Column(Integer, ForeignKey("games.id"))
+    code = Column(VARCHAR(255))
     is_buy = Column(Boolean)
 
     game = relationship("Games")

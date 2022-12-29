@@ -17,6 +17,11 @@ class GamesToCase(BaseModel):
     games_id: List[int]
 
 
+class Keys(BaseModel):
+    game_id: int
+    keys: List[str]
+
+
 class Email(BaseModel):
     email: str
 
@@ -29,11 +34,20 @@ class UserInfo(BaseModel):
         orm_mode = True
 
 
+class Game(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
 class Case(BaseModel):
     id: int
     name: str
     price: int
     old_price: Union[int, None]
+    games: List[Game]
 
     class Config:
         orm_mode = True

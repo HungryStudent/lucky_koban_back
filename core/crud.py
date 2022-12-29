@@ -8,7 +8,7 @@ import string
 import jwt
 
 import hashlib
-from configs import salt, photo_path
+from configs import salt, cases_photo_path, games_photo_path
 
 
 def create_case(name, price, photo, db: Session):
@@ -18,7 +18,7 @@ def create_case(name, price, photo, db: Session):
         db.flush()
     except IntegrityError:
         raise HTTPException(400, "this name is used")
-    path = photo_path + str(case.id) + ".png"
+    path = cases_photo_path + str(case.id) + ".png"
     with open(path, 'wb') as f:
         f.write(photo)
     db.commit()
@@ -31,7 +31,7 @@ def create_game(name, photo, db: Session):
         db.flush()
     except IntegrityError:
         raise HTTPException(400, "this name is used")
-    path = photo_path + str(game.id) + ".png"
+    path = games_photo_path + str(game.id) + ".png"
     with open(path, 'wb') as f:
         f.write(photo)
     db.commit()
@@ -40,13 +40,26 @@ def create_game(name, photo, db: Session):
 def add_games_to_case(games_data: schemas.GamesToCase, db: Session):
     for game in games_data.games_id:
         case_game = models.case_games.insert().values(case_id=games_data.case_id, game_id=game)
-        print(case_game)
         db.execute(case_game)
+    db.commit()
+
+
+def add_keys(keys_data: schemas.Keys, db: Session):
+    for key in keys_data.keys:
+        new_key = models.Keys(game_id=keys_data.game_id, code=key, is_buy=False)
+        db.add(new_key)
     db.commit()
 
 
 def get_cases(db: Session):
     return db.query(models.Cases).all()
+
+
+def get_case(case_id, db: Session):
+    case = db.query(models.Cases).filter(models.Cases.id == case_id).first()
+    if case is None:
+        raise HTTPException(400, "invalid case id")
+    return case
 
 
 def gen_code():

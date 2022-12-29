@@ -62,3 +62,10 @@ async def create_game(admin_token: str = Cookie(), photo: UploadFile = File(...)
         raise HTTPException(415, "is not png/jpg file")
     crud.create_game(name, photo.file.read(), db)
     return {"message": f"{name} is created"}
+
+
+@router.post('/games/add_keys', status_code=201)
+async def add_keys(keys_data: schemas.Keys, admin_token: str = Cookie(), db: Session = Depends(get_db)):
+    check_admin_token(admin_token)
+    crud.add_keys(keys_data, db)
+    return {"message": f"keys added to game"}
