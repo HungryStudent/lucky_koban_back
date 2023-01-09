@@ -6,6 +6,7 @@ import email_validate
 import jwt
 from jwt import DecodeError
 from sqlalchemy.orm import Session
+from core.jwt_funcs import get_info_token
 
 from configs import salt
 
@@ -21,14 +22,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-def get_info_token(token: str = Cookie()):
-    try:
-        user_data = jwt.decode(token, salt, algorithms=["HS256"])
-    except DecodeError:
-        raise HTTPException(401, "invalid token")
-    return user_data["user_id"]
 
 
 @router.get('/get_me', response_model=schemas.UserInfo, tags=["User Methods "])
@@ -64,5 +57,3 @@ async def sign_user(response: Response, user_data: schemas.UserCreate, db: Sessi
     token = crud.sign_user(db, user_data)
     response.set_cookie(key="token", value=token)
     return schemas.BaseResponse(status=True, msg="login is sucessful")
-
-

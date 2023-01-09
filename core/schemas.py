@@ -53,6 +53,15 @@ class Case(BaseModel):
         orm_mode = True
 
 
+class PayUrl(BaseModel):
+    url: str
+
+
+class BuyData(BaseModel):
+    user_id: int
+    case_id: int
+
+
 class AuthResponse(BaseModel):
     status: str
     msg: str
