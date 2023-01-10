@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import func, text
 from core import models, schemas, smtp
 
 import random
@@ -39,7 +40,7 @@ def create_game(name, photo, db: Session):
 
 def add_games_to_case(games_data: schemas.GamesToCase, db: Session):
     for game in games_data.games_id:
-        case_game = models.case_games.insert().values(case_id=games_data.case_id, game_id=game)
+        case_game = models.CaseGame(case_id=games_data.case_id, game_id=game)
         db.execute(case_game)
     db.commit()
 
@@ -60,6 +61,16 @@ def get_case(case_id, db: Session):
     if case is None:
         raise HTTPException(400, "invalid case id")
     return case
+
+
+def add_case_to_user(buy_data: schemas.BuyData, db: Session):
+    game_id = db.query(models.CaseGame.game_id).filter(models.CaseGame.case_id == buy_data.case_id).order_by(
+        func.random()).first()
+    key_id = db.query(models.Keys.game_id).filter(models.Keys.game_id == game_id, models.Keys.is_buy is False).first()
+    db.query(models.Keys).filter(models.Keys.id == key_id).update({"is_buy": True, "user_id": buy_data.user_id})
+    purchase = models.Purchases(user_id=buy_data.user_id, case_id=buy_data.case_id, key_id=key_id, is_open=False)
+    db.add(purchase)
+    db.commit()
 
 
 def gen_code():
@@ -105,11 +116,11 @@ def sign_user(db: Session, user_data: schemas.UserCreate):
     md5 = hashlib.md5()
     md5.update((user_data.password + salt).encode('utf-8'))
     password_hash = md5.hexdigest()
-    hash_in_db = db.query(models.Users.password_hash).filter(models.Users.login == user_data.email).first()
+    hash_in_db = db.query(models.Users.password_hash).filter(models.Users.email == user_data.email).first()
     if hash_in_db is None:
-        raise HTTPException(401, "invalid login")
+        raise HTTPException(401, "invalid email")
     if password_hash == hash_in_db[0]:
-        user_id = db.query(models.Users.id).filter(models.Users.login == user_data.email).first()[0]
+        user_id = db.query(models.Users.id).filter(models.Users.email == user_data.email).first()[0]
         token = jwt.encode({"user_id": user_id}, salt, algorithm="HS256")
         return token
     raise HTTPException(401, "invalid password")
